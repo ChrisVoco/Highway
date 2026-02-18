@@ -1,164 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>HIGHWAY RUSH</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
 
-:root {
-  --asphalt: #0d0d1a;
-  --neon-yellow: #f5d020;
-  --neon-red: #e94560;
-  --neon-cyan: #00d4ff;
-  --neon-green: #39ff14;
-  --gray: #666;
+:root{
+  --asphalt:#0d0d1a;
+  --neon-yellow:#f5d020;
+  --neon-red:#e94560;
+  --neon-cyan:#00d4ff;
+  --neon-green:#39ff14;
+  --gray:#666;
 }
 
-* { margin:0; padding:0; box-sizing:border-box; }
+*{margin:0;padding:0;box-sizing:border-box}
 
-body {
-  background: var(--asphalt);
-  font-family: 'Orbitron', monospace;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  gap: 24px;
-  padding: 20px;
-}
-
-#gameContainer {
-  position: relative;
-  flex-shrink: 0;
+body{
+  background:var(--asphalt);
+  font-family:'Orbitron', monospace;
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  gap:24px;
+  padding:20px;
 }
 
-canvas {
-  display: block;
-  border: 2px solid var(--neon-cyan);
-  box-shadow: 0 0 30px rgba(0,212,255,0.5);
+/* Responsive layout: small screens stack */
+@media (max-width: 820px){
+  body{ flex-direction:column; }
+  #scoreboard{ width:min(92vw, 540px) !important; }
 }
 
-.screen {
-  position: absolute;
-  inset: 0;
-  background: rgba(8,8,24,0.93);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 20;
+#gameContainer{
+  position:relative;
+  flex-shrink:0;
+  width:min(92vw, 540px);
 }
-.screen.hidden { display: none !important; }
 
-.screen h1 {
-  font-size: 3em;
-  font-weight: 900;
-  color: var(--neon-yellow);
-  text-shadow: 0 0 20px var(--neon-yellow);
-  letter-spacing: 4px;
-  line-height: 1;
+/* Keep internal canvas resolution 400x600 for logic, but scale visually */
+canvas{
+  display:block;
+  width:min(92vw, 540px);
+  height:auto;
+  aspect-ratio: 2 / 3;
+  border:2px solid var(--neon-cyan);
+  box-shadow:0 0 30px rgba(0,212,255,0.5);
 }
-.screen .sub {
-  font-size: 0.7em;
-  color: var(--neon-cyan);
-  letter-spacing: 8px;
-  margin: 6px 0 36px;
-  text-shadow: 0 0 10px var(--neon-cyan);
-}
-.screen h2 {
-  font-size: 2em;
-  color: var(--neon-red);
-  text-shadow: 0 0 20px var(--neon-red);
-  letter-spacing: 3px;
-  margin-bottom: 14px;
-}
-.final-score { font-size: 1.1em; color: var(--neon-yellow); margin-bottom: 6px; letter-spacing: 2px; }
-.new-record  { font-size: 0.85em; color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); letter-spacing: 4px; margin-bottom: 18px; animation: blink 0.9s infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-.hint { font-size: 0.5em; color: var(--gray); letter-spacing: 4px; margin-top: 18px; }
 
-.btn {
-  background: transparent;
-  border: 2px solid var(--neon-green);
-  color: var(--neon-green);
-  font-family: 'Orbitron', monospace;
-  font-size: 0.9em;
-  font-weight: 700;
-  letter-spacing: 3px;
-  padding: 12px 32px;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: all 0.15s;
-  margin: 6px;
+.screen{
+  position:absolute;
+  inset:0;
+  background:rgba(8,8,24,0.93);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:20;
+  text-align:center;
+  padding:18px;
 }
-.btn:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 20px var(--neon-green); }
-.btn.red   { border-color: var(--neon-red); color: var(--neon-red); }
-.btn.red:hover { background: var(--neon-red); color: #fff; box-shadow: 0 0 20px var(--neon-red); }
+.screen.hidden{display:none !important}
 
-#nameInput {
-  background: transparent;
-  border: 1px solid var(--neon-cyan);
-  color: var(--neon-cyan);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 1em;
-  padding: 10px 16px;
-  text-align: center;
-  width: 210px;
-  margin-bottom: 14px;
-  letter-spacing: 2px;
-  outline: none;
+.screen h1{
+  font-size:3em;
+  font-weight:900;
+  color:var(--neon-yellow);
+  text-shadow:0 0 20px var(--neon-yellow);
+  letter-spacing:4px;
+  line-height:1;
 }
-#nameInput::placeholder { color: rgba(0,212,255,0.35); }
+.screen .sub{
+  font-size:0.7em;
+  color:var(--neon-cyan);
+  letter-spacing:8px;
+  margin:6px 0 18px;
+  text-shadow:0 0 10px var(--neon-cyan);
+}
+.screen h2{
+  font-size:2em;
+  color:var(--neon-red);
+  text-shadow:0 0 20px var(--neon-red);
+  letter-spacing:3px;
+  margin-bottom:14px;
+}
 
-#hud {
-  position: absolute;
-  top: 10px; left: 10px; right: 10px;
-  display: flex;
-  justify-content: space-between;
-  z-index: 10;
-  pointer-events: none;
-}
-.hud-box {
-  background: rgba(0,0,0,0.7);
-  border: 1px solid rgba(0,212,255,0.25);
-  padding: 5px 11px;
-  font-size: 0.6em;
-  letter-spacing: 2px;
-}
-.hud-label { color: var(--gray); font-size: 0.8em; margin-bottom: 2px; }
-.hud-val   { color: var(--neon-cyan); font-size: 1.4em; font-weight: 700; }
-#livesBox  { display: flex; gap: 5px; align-items: center; margin-top: 2px; }
-.heart { width:14px; height:14px; background:var(--neon-red); clip-path:polygon(50% 15%,65% 0,85% 0,100% 15%,100% 35%,50% 85%,0 35%,0 15%,15% 0,35% 0); filter:drop-shadow(0 0 3px var(--neon-red)); }
-.heart.off { background:rgba(233,69,96,0.18); filter:none; }
+.final-score{font-size:1.1em;color:var(--neon-yellow);margin-bottom:10px;letter-spacing:2px}
+.new-record{font-size:0.85em;color:var(--neon-green);text-shadow:0 0 10px var(--neon-green);letter-spacing:4px;margin-bottom:14px;animation:blink .9s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hint{font-size:0.55em;color:var(--gray);letter-spacing:3px;margin-top:14px}
 
-#speedBar  { position:absolute; bottom:8px; left:8px; right:8px; height:3px; background:rgba(255,255,255,0.08); z-index:10; }
-#speedFill { height:100%; background:linear-gradient(90deg,var(--neon-cyan),var(--neon-yellow)); box-shadow:0 0 6px var(--neon-cyan); transition:width 0.4s; width:20%; }
+.btn{
+  background:transparent;
+  border:2px solid var(--neon-green);
+  color:var(--neon-green);
+  font-family:'Orbitron', monospace;
+  font-size:0.9em;
+  font-weight:700;
+  letter-spacing:3px;
+  padding:12px 28px;
+  cursor:pointer;
+  text-transform:uppercase;
+  transition:all .15s;
+  margin:6px;
+}
+.btn:hover{background:var(--neon-green);color:#000;box-shadow:0 0 20px var(--neon-green)}
+.btn.red{border-color:var(--neon-red);color:var(--neon-red)}
+.btn.red:hover{background:var(--neon-red);color:#fff;box-shadow:0 0 20px var(--neon-red)}
+.btn.cyan{border-color:var(--neon-cyan);color:var(--neon-cyan)}
+.btn.cyan:hover{background:var(--neon-cyan);color:#000;box-shadow:0 0 20px var(--neon-cyan)}
 
-#scoreboard {
-  width: 230px;
-  background: rgba(16,24,48,0.9);
-  border: 1px solid rgba(0,212,255,0.25);
-  padding: 18px;
-  box-shadow: 0 0 18px rgba(0,212,255,0.1);
-  flex-shrink: 0;
+.small{
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.78em;
+  color:rgba(255,255,255,0.75);
+  letter-spacing:1px;
+  margin:6px 0 8px;
 }
-#scoreboard h2 {
-  font-size: 0.75em; letter-spacing: 5px; color: var(--neon-yellow);
-  text-shadow: 0 0 8px var(--neon-yellow); text-align: center;
-  border-bottom: 1px solid rgba(245,208,32,0.2);
-  padding-bottom: 12px; margin-bottom: 14px;
+.err{
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.85em;
+  color:var(--neon-red);
+  text-shadow:0 0 10px rgba(233,69,96,0.35);
+  letter-spacing:1px;
+  min-height:18px;
+  margin-bottom:8px;
 }
-.se { display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-family:'Share Tech Mono',monospace; font-size:0.76em; }
-.se-rank { width:22px; color:var(--gray); flex-shrink:0; }
-.se-rank.g{color:#ffd700} .se-rank.s{color:#c0c0c0} .se-rank.b{color:#cd7f32}
-.se-name { flex:1; color:#ddd; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.se-score { color:var(--neon-cyan); font-weight:bold; flex-shrink:0; }
-.se.hi .se-name, .se.hi .se-score { color:var(--neon-green); text-shadow:0 0 5px var(--neon-green); }
-.no-scores { color:var(--gray); font-size:0.68em; text-align:center; padding:18px 0; letter-spacing:2px; }
-#clearBtn  { margin-top:14px; width:100%; font-size:0.55em; letter-spacing:2px; padding:8px; }
+
+#regNameInput{
+  background:transparent;
+  border:1px solid var(--neon-cyan);
+  color:var(--neon-cyan);
+  font-family:'Share Tech Mono', monospace;
+  font-size:1em;
+  padding:10px 16px;
+  text-align:center;
+  width:240px;
+  margin-bottom:10px;
+  letter-spacing:2px;
+  outline:none;
+}
+#regNameInput::placeholder{color:rgba(0,212,255,0.35)}
+
+#hud{
+  position:absolute;
+  top:10px;left:10px;right:10px;
+  display:flex;
+  justify-content:space-between;
+  z-index:10;
+  pointer-events:none;
+}
+.hud-box{
+  background:rgba(0,0,0,0.7);
+  border:1px solid rgba(0,212,255,0.25);
+  padding:5px 11px;
+  font-size:0.6em;
+  letter-spacing:2px;
+}
+.hud-label{color:var(--gray);font-size:0.8em;margin-bottom:2px}
+.hud-val{color:var(--neon-cyan);font-size:1.4em;font-weight:700}
+#livesBox{display:flex;gap:5px;align-items:center;margin-top:2px}
+.heart{width:14px;height:14px;background:var(--neon-red);clip-path:polygon(50% 15%,65% 0,85% 0,100% 15%,100% 35%,50% 85%,0 35%,0 15%,15% 0,35% 0);filter:drop-shadow(0 0 3px var(--neon-red))}
+.heart.off{background:rgba(233,69,96,0.18);filter:none}
+
+#speedBar{position:absolute;bottom:8px;left:8px;right:8px;height:3px;background:rgba(255,255,255,0.08);z-index:10}
+#speedFill{height:100%;background:linear-gradient(90deg,var(--neon-cyan),var(--neon-yellow));box-shadow:0 0 6px var(--neon-cyan);transition:width .4s;width:20%}
+
+#scoreboard{
+  width:260px;
+  background:rgba(16,24,48,0.9);
+  border:1px solid rgba(0,212,255,0.25);
+  padding:18px;
+  box-shadow:0 0 18px rgba(0,212,255,0.1);
+  flex-shrink:0;
+}
+#scoreboard h2{
+  font-size:0.75em;
+  letter-spacing:5px;
+  color:var(--neon-yellow);
+  text-shadow:0 0 8px var(--neon-yellow);
+  text-align:center;
+  border-bottom:1px solid rgba(245,208,32,0.2);
+  padding-bottom:12px;
+  margin-bottom:14px;
+}
+.se{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.8em;
+}
+.se-rank{width:26px;color:var(--gray);flex-shrink:0}
+.se-rank.g{color:#ffd700}
+.se-rank.s{color:#c0c0c0}
+.se-rank.b{color:#cd7f32}
+.se-name{flex:1;color:#ddd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.se-score{color:var(--neon-cyan);font-weight:bold;flex-shrink:0}
+.se.hi .se-name, .se.hi .se-score{color:var(--neon-green);text-shadow:0 0 5px var(--neon-green)}
+.no-scores{color:var(--gray);font-size:0.72em;text-align:center;padding:18px 0;letter-spacing:2px}
+
+#clearBtn{margin-top:14px;width:100%;font-size:0.6em;letter-spacing:2px;padding:8px}
+#profileLine{
+  margin-top:10px;
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.7em;
+  color:rgba(0,212,255,0.75);
+  letter-spacing:2px;
+}
 </style>
 </head>
 <body>
@@ -174,20 +229,36 @@ canvas {
 
   <div id="speedBar"><div id="speedFill"></div></div>
 
-  <div class="screen" id="startScreen">
+  <!-- REGISTER SCREEN (local only) -->
+  <div class="screen" id="regScreen">
+    <h1>HIGHWAY</h1>
+    <div class="sub">&#9672; RUSH &#9672;</div>
+
+    <div class="small">REGISTER NAME (LOCAL)</div>
+    <input id="regNameInput" type="text" maxlength="12" placeholder="YOUR NAME" autocomplete="off" />
+    <div class="err" id="regErr"></div>
+
+    <button class="btn cyan" id="regBtn">REGISTER</button>
+    <div class="hint">SAVES ON THIS DEVICE (LOCAL STORAGE)</div>
+  </div>
+
+  <!-- START SCREEN -->
+  <div class="screen hidden" id="startScreen">
     <h1>HIGHWAY</h1>
     <div class="sub">&#9672; RUSH &#9672;</div>
     <button class="btn" id="startBtn">&#9654; START</button>
+    <button class="btn cyan" id="changeNameBtn">CHANGE NAME</button>
     <div class="hint">&#8592; &#8594; ARROW KEYS &nbsp;|&nbsp; A / D &nbsp;|&nbsp; SWIPE</div>
+    <div id="profileLine"></div>
   </div>
 
+  <!-- GAME OVER (no name prompt) -->
   <div class="screen hidden" id="goScreen">
     <h2>GAME OVER</h2>
     <div class="final-score" id="goScore"></div>
     <div class="new-record hidden" id="goRecord">&#9733; NEW RECORD &#9733;</div>
-    <input id="nameInput" type="text" maxlength="12" placeholder="YOUR NAME" autocomplete="off" />
-    <button class="btn" id="saveBtn">SAVE SCORE</button>
-    <button class="btn red" id="skipBtn">SKIP</button>
+    <button class="btn" id="againBtn">PLAY AGAIN</button>
+    <button class="btn red" id="menuBtn">MENU</button>
   </div>
 </div>
 
@@ -198,80 +269,204 @@ canvas {
 </div>
 
 <script>
-/* ─── SCORE DB ─────────────────────── */
-const DB_KEY = 'hr_scores_v2';
-let scores = [];
-let lastScore = 0;
-let hlVal = null;
+/* ─────────────────────────────────────────────
+   LOCAL "DB": profile + unique leaderboard
+   (LocalStorage acts as persistent storage)
+───────────────────────────────────────────── */
 
-async function loadScores() {
-  try {
-    if (window.storage) {
-      const r = await window.storage.get(DB_KEY);
-      if (r) scores = JSON.parse(r.value);
-    }
-  } catch(e) {}
+const PROFILE_KEY = 'hr_profile_local_v1';
+const DB_KEY      = 'hr_scores_local_v3';
+const MAX_ENTRIES = 10;
+const ONLY_IMPROVE = true; // save only if better
+
+let profile = null;         // { name }
+let scoreDB = {};           // name -> { name, value, updatedAt }
+let scores  = [];           // sorted array for rendering
+let best    = 0;
+
+function normalizeName(raw) {
+  return (raw || '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, ' ')
+    .replace(/[^A-Z0-9 _-]/g, '')
+    .slice(0, 12);
+}
+
+function loadProfile() {
+  try { profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null'); }
+  catch(e){ profile = null; }
+}
+function saveProfile(name) {
+  profile = { name };
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+  refreshProfileLine();
+}
+function clearProfile() {
+  profile = null;
+  localStorage.removeItem(PROFILE_KEY);
+  refreshProfileLine();
+}
+
+function loadScores() {
+  try { scoreDB = JSON.parse(localStorage.getItem(DB_KEY) || '{}') || {}; }
+  catch(e){ scoreDB = {}; }
+  rebuildScoresArray();
   renderBoard();
+  updateBestFromScores();
 }
 
-async function persistScores() {
-  try {
-    if (window.storage) await window.storage.set(DB_KEY, JSON.stringify(scores));
-  } catch(e) {}
+function persistScores() {
+  localStorage.setItem(DB_KEY, JSON.stringify(scoreDB));
 }
 
-function addScore(name, val) {
-  hlVal = val;
-  scores.push({ name: name.trim().toUpperCase() || 'PLAYER', value: val });
-  scores.sort((a,b) => b.value - a.value);
-  scores = scores.slice(0, 10);
+function rebuildScoresArray() {
+  scores = Object.values(scoreDB)
+    .sort((a,b)=>b.value-a.value)
+    .slice(0, MAX_ENTRIES);
+}
+
+function updateBestFromScores() {
+  const top = scores[0]?.value ?? 0;
+  best = Math.max(best, top);
+  document.getElementById('hBest').textContent = best.toLocaleString();
+}
+
+function nameExists(name) {
+  return !!scoreDB[name];
+}
+
+// upsert (unique name), keep top10 in DB too
+function addOrUpdateScore(name, val) {
+  const existing = scoreDB[name];
+
+  if (existing && ONLY_IMPROVE && val <= existing.value) {
+    return { saved:false, newRecord:false, best: existing.value };
+  }
+
+  const now = Date.now();
+  scoreDB[name] = { name, value: val, updatedAt: now };
+
+  rebuildScoresArray();
+
+  // enforce top10 keys
+  const keep = new Set(scores.map(s=>s.name));
+  Object.keys(scoreDB).forEach(n => { if (!keep.has(n)) delete scoreDB[n]; });
+
   persistScores();
-  renderBoard(val);
+  renderBoard(name);
+  updateBestFromScores();
+
+  return { saved:true, newRecord:true, best: val };
 }
 
-function renderBoard(hl) {
+function renderBoard(hlName) {
   const el = document.getElementById('scoreList');
   if (!scores.length) {
-    el.innerHTML = '<div class="no-scores">NO SCORES YET</div>'; return;
+    el.innerHTML = '<div class="no-scores">NO SCORES YET</div>';
+    return;
   }
   const med = ['g','s','b'];
-  const sym = ['\uD83E\uDD47','\uD83E\uDD48','\uD83E\uDD49'];
-  el.innerHTML = scores.map((s,i) => {
-    const isHl = hl !== undefined && s.value === hl;
-    const rankCls = i < 3 ? med[i] : '';
-    const rankTxt = i < 3 ? sym[i] : '#'+(i+1);
+  const sym = ['🥇','🥈','🥉'];
+
+  el.innerHTML = scores.map((s,i)=>{
+    const isHl = hlName && s.name === hlName;
+    const rankCls = i<3 ? med[i] : '';
+    const rankTxt = i<3 ? sym[i] : '#'+(i+1);
     return `<div class="se${isHl?' hi':''}">
       <span class="se-rank ${rankCls}">${rankTxt}</span>
       <span class="se-name">${s.name}</span>
-      <span class="se-score">${s.value.toLocaleString()}</span>
+      <span class="se-score">${Number(s.value).toLocaleString()}</span>
     </div>`;
   }).join('');
 }
 
 function clearScores() {
   if (!confirm('Clear all scores?')) return;
-  scores = []; hlVal = null;
-  persistScores(); renderBoard();
+  scoreDB = {};
+  scores = [];
+  persistScores();
+  renderBoard();
+  best = 0;
+  document.getElementById('hBest').textContent = '0';
 }
 
-/* ─── CANVAS / GAME ─────────────────── */
+function refreshProfileLine() {
+  const el = document.getElementById('profileLine');
+  el.textContent = profile?.name ? `PLAYER: ${profile.name}` : 'PLAYER: (NONE)';
+}
+
+/* ─────────────────────────────────────────────
+   UI helpers
+───────────────────────────────────────────── */
+
+function vis(id, show) {
+  const el = document.getElementById(id);
+  show ? el.classList.remove('hidden') : el.classList.add('hidden');
+}
+
+function goToRegister() {
+  vis('regScreen', true);
+  vis('startScreen', false);
+  vis('goScreen', false);
+  document.getElementById('regErr').textContent = '';
+  document.getElementById('regNameInput').value = '';
+}
+
+function goToStart() {
+  vis('regScreen', false);
+  vis('startScreen', true);
+  vis('goScreen', false);
+  refreshProfileLine();
+  drawRoad();
+  drawCar(LANES[1], H-120, 42, 76, '#00d4ff', '#ffffff', true);
+}
+
+/* Register */
+document.getElementById('regBtn').addEventListener('click', () => {
+  const raw = document.getElementById('regNameInput').value;
+  const err = document.getElementById('regErr');
+  err.textContent = '';
+
+  const name = normalizeName(raw);
+  if (!name) { err.textContent = 'ENTER A NAME'; return; }
+  if (name.length < 3) { err.textContent = 'MIN 3 CHARACTERS'; return; }
+
+  // Unique in local leaderboard (no duplicates)
+  if (nameExists(name)) { err.textContent = 'NAME ALREADY USED (LOCAL)'; return; }
+
+  saveProfile(name);
+  goToStart();
+});
+
+document.getElementById('changeNameBtn').addEventListener('click', () => {
+  clearProfile();
+  goToRegister();
+});
+
+document.getElementById('clearBtn').addEventListener('click', clearScores);
+
+/* ─────────────────────────────────────────────
+   GAME (your original, slightly adapted)
+───────────────────────────────────────────── */
+
 const canvas = document.getElementById('c');
 const ctx    = canvas.getContext('2d');
 const W = 400, H = 600;
 
 const ROAD_L = 44, ROAD_R = W - 44, ROAD_W = W - 88;
 const LANE_W = ROAD_W / 4;
-const LANES  = [0,1,2,3].map(i => ROAD_L + LANE_W*i + LANE_W/2); // [80,160,240,320]
+const LANES  = [0,1,2,3].map(i => ROAD_L + LANE_W*i + LANE_W/2);
 
 let gState = 'start';
 let score, lives, speed, frame, animId;
-let best = 0;
 let marks, traffic, sparks;
+let lastScore = 0;
 
-/* Player object */
+/* Player */
 const P = { x:0, y:H-120, w:42, h:76, lane:1, tx:0, inv:false, iTimer:0 };
 
-/* ─── INPUT ─────────────────────────── */
+/* INPUT */
 const KEYS = {};
 document.addEventListener('keydown', e => {
   if (KEYS[e.key]) return;
@@ -282,7 +477,7 @@ document.addEventListener('keyup', e => { delete KEYS[e.key]; });
 
 let tx0 = 0;
 canvas.addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, {passive:true});
-canvas.addEventListener('touchend',   e => {
+canvas.addEventListener('touchend', e => {
   if (gState !== 'play') return;
   const dx = e.changedTouches[0].clientX - tx0;
   if      (dx > 25) move('ArrowRight');
@@ -294,7 +489,7 @@ function move(k) {
   if ((k==='ArrowRight'||k==='d'||k==='D') && P.lane<3) { P.lane++; P.tx=LANES[P.lane]; }
 }
 
-/* ─── SPAWN ─────────────────────────── */
+/* SPAWN */
 const PALETTE = [
   ['#e94560','#ff8fa3'],['#f97316','#fdba74'],['#eab308','#fef08a'],
   ['#a855f7','#d8b4fe'],['#10b981','#6ee7b7'],['#3b82f6','#93c5fd']
@@ -315,8 +510,8 @@ function spawnSparks(x, y, col) {
   }
 }
 
-/* ─── DRAW HELPERS ──────────────────── */
-function rr(x,y,w,h,r) { // roundRect polyfill
+/* DRAW HELPERS */
+function rr(x,y,w,h,r) {
   ctx.beginPath();
   ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
   ctx.arcTo(x+w,y,x+w,y+r,r); ctx.lineTo(x+w,y+h-r);
@@ -330,7 +525,6 @@ function drawRoad() {
   ctx.fillStyle='#0d0d1a'; ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#1a2035'; ctx.fillRect(ROAD_L,0,ROAD_W,H);
 
-  // animated kerb stripes
   const off = (marks[0] ? marks[0].y % 40 : 0);
   for (let yy=-40+off; yy<H+40; yy+=40) {
     const even = Math.floor(yy/20)%2===0;
@@ -339,7 +533,6 @@ function drawRoad() {
     ctx.fillRect(ROAD_R,   yy, 9, 20);
   }
 
-  // lane dashes
   ctx.setLineDash([28,22]); ctx.strokeStyle='rgba(255,255,255,0.22)'; ctx.lineWidth=2;
   for (let i=1;i<4;i++) {
     const lx=ROAD_L+LANE_W*i;
@@ -347,7 +540,6 @@ function drawRoad() {
   }
   ctx.setLineDash([]);
 
-  // scroll sheen
   marks.forEach(m => {
     ctx.fillStyle='rgba(255,255,255,0.035)';
     ctx.fillRect(ROAD_L,m.y,ROAD_W,3);
@@ -360,17 +552,13 @@ function drawCar(cx,cy,w,h,body,accent,isP) {
   ctx.shadowColor = isP ? 'rgba(0,212,255,0.7)' : 'rgba(0,0,0,0.5)';
   ctx.shadowBlur  = isP ? 18 : 8;
 
-  // body
   ctx.fillStyle=body; rr(x+3,y+6,w-6,h-12,5); ctx.fill();
-  // roof
   ctx.fillStyle=isP?'#071a30':'#111'; ctx.fillRect(x+7,y+18,w-14,h*0.38);
-  // windshield
   ctx.fillStyle=isP?'rgba(0,212,255,0.55)':'rgba(140,215,255,0.4)';
   ctx.fillRect(x+9,y+20,w-18,13);
-  // rear window
   ctx.fillStyle=isP?'rgba(0,180,220,0.4)':'rgba(110,190,230,0.3)';
   ctx.fillRect(x+9,y+h-26,w-18,9);
-  // stripe
+
   ctx.globalAlpha=0.55; ctx.fillStyle=accent;
   ctx.fillRect(x+3,y+h/2-2,w-6,5); ctx.globalAlpha=1;
 
@@ -400,13 +588,13 @@ function drawSparks() {
   });
 }
 
-/* ─── COLLISION ─────────────────────── */
+/* COLLISION */
 function hits(a,b) {
   return Math.abs(a.x-b.x) < (a.w+b.w)/2 - 10 &&
          Math.abs(a.y-b.y) < (a.h+b.h)/2 - 10;
 }
 
-/* ─── HUD ───────────────────────────── */
+/* HUD */
 function updateLives() {
   const el=document.getElementById('livesBox'); el.innerHTML='';
   for (let i=0;i<3;i++){
@@ -416,7 +604,7 @@ function updateLives() {
   }
 }
 
-/* ─── GAME LOOP ─────────────────────── */
+/* LOOP */
 function loop() {
   if (gState!=='play') return;
   frame++;
@@ -463,9 +651,10 @@ function loop() {
   animId=requestAnimationFrame(loop);
 }
 
-/* ─── FLOW ──────────────────────────── */
+/* FLOW */
 function startGame() {
-  vis('startScreen',false); vis('goScreen',false);
+  vis('startScreen',false);
+  vis('goScreen',false);
   gState='play';
   score=0; lives=3; speed=3.5; frame=0;
   marks=Array.from({length:12},(_,i)=>({y:i*60}));
@@ -480,43 +669,47 @@ function startGame() {
 function endGame() {
   gState='over'; cancelAnimationFrame(animId);
   lastScore=score;
+
   document.getElementById('goScore').textContent='SCORE: '+score.toLocaleString();
-  const isNew = scores.length<10 || score>(scores[scores.length-1]?.value??-1);
-  vis('goRecord', isNew);
-  document.getElementById('nameInput').value='';
-  vis('goScreen',true);
+
+  // Auto-save locally (no name prompt)
+  if (!profile?.name) {
+    // if somehow no profile, force register
+    vis('goRecord', false);
+    vis('goScreen', false);
+    goToRegister();
+    return;
+  }
+
+  const res = addOrUpdateScore(profile.name, lastScore);
+
+  // Show NEW RECORD only if improved
+  vis('goRecord', res.saved && res.newRecord);
+
+  vis('goScreen', true);
 }
 
-function submitScore() {
-  const name=document.getElementById('nameInput').value||'PLAYER';
-  addScore(name,lastScore);
-  vis('goScreen',false); backToStart();
-}
+/* Buttons */
+document.getElementById('startBtn').addEventListener('click', startGame);
+document.getElementById('againBtn').addEventListener('click', startGame);
+document.getElementById('menuBtn').addEventListener('click', () => {
+  vis('goScreen', false);
+  vis('startScreen', true);
+});
 
-function skipAndRestart() { vis('goScreen',false); backToStart(); }
+/* BOOT */
+(function boot(){
+  loadScores();
+  loadProfile();
+  refreshProfileLine();
 
-function backToStart() {
-  gState='start'; vis('startScreen',true);
+  marks=Array.from({length:12},(_,i)=>({y:i*60}));
   drawRoad();
   drawCar(LANES[1],H-120,42,76,'#00d4ff','#ffffff',true);
-}
 
-function vis(id,show) {
-  const el=document.getElementById(id);
-  show ? el.classList.remove('hidden') : el.classList.add('hidden');
-}
-
-/* ─── WIRE UP BUTTONS ───────────────── */
-document.getElementById('startBtn').addEventListener('click', startGame);
-document.getElementById('saveBtn').addEventListener('click',  submitScore);
-document.getElementById('skipBtn').addEventListener('click',  skipAndRestart);
-document.getElementById('clearBtn').addEventListener('click', clearScores);
-
-/* ─── BOOT ──────────────────────────── */
-loadScores();
-marks=Array.from({length:12},(_,i)=>({y:i*60}));
-drawRoad();
-drawCar(LANES[1],H-120,42,76,'#00d4ff','#ffffff',true);
+  if (profile?.name) goToStart();
+  else goToRegister();
+})();
 </script>
 </body>
 </html>
