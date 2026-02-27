@@ -432,9 +432,14 @@ document.getElementById('regBtn').addEventListener('click', () => {
   if (!name) { err.textContent = 'ENTER A NAME'; return; }
   if (name.length < 3) { err.textContent = 'MIN 3 CHARACTERS'; return; }
 
-  // Unique in local leaderboard (no duplicates)
-  if (nameExists(name)) { err.textContent = 'NAME ALREADY USED (LOCAL)'; return; }
+  // ✅ Kui nimi on juba olemas, siis kasuta seda (logi sisse), ÄRA näita errorit
+  if (nameExists(name)) {
+    saveProfile(name);     // teeb aktiivseks mängijaks
+    goToStart();           // mine menüüsse/start screenile
+    return;
+  }
 
+  // ✅ Uus nimi: tee profiil ja lase mängida
   saveProfile(name);
   goToStart();
 });
